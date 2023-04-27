@@ -1,6 +1,7 @@
 import { Rating } from "./Rating";
 import Link from "next/link";
 import Image from "next/legacy/image";
+import { ZaisteReactMarkdown } from "./ZaisteReactMarkdown";
 
 interface ProductDetails {
   id: number;
@@ -9,6 +10,7 @@ interface ProductDetails {
   thumbnailUrl: string;
   thumbnailAlt: string;
   rating: number;
+  longDescription: string;
 }
 
 interface ProductProps {
@@ -31,6 +33,9 @@ export const ProductDetails = ({ data }: ProductProps) => {
 
       <h2 className="p-4 font-bold">{data.title}</h2>
       <p className="p-4">{data.description}</p>
+      <article className="p-4 prose lg:prose-xl">
+        <ZaisteReactMarkdown>{data.longDescription}</ZaisteReactMarkdown>
+      </article>
       <Rating rating={data.rating} />
     </>
   );
