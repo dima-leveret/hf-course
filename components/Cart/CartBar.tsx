@@ -1,8 +1,12 @@
 import Link from "next/link";
+import { useCartSate } from "./CartContext";
 
 export const CartBar = () => {
+  const cartState = useCartSate();
+
   return (
     <Link href="/cart" className="inline-flex text-white">
+      {cartState.items.length}
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"

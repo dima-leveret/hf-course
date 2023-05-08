@@ -2,6 +2,7 @@ import { Rating } from "./Rating";
 import Link from "next/link";
 import Image from "next/legacy/image";
 import { ZaisteReactMarkdown } from "./ZaisteReactMarkdown";
+import { useCartSate } from "./Cart/CartContext";
 
 interface ProductDetails {
   id: number;
@@ -51,6 +52,8 @@ interface ProductListItemProps {
 }
 
 export const ProductListItem = ({ data }: ProductListItemProps) => {
+  const cartState = useCartSate();
+
   return (
     <>
       <div className="p-4 bg-white">
@@ -67,6 +70,16 @@ export const ProductListItem = ({ data }: ProductListItemProps) => {
       <Link href={`/products/${data.id}`}>
         <h2 className="p-4 font-bold">{data.title}</h2>
       </Link>
+      <button
+        onClick={() =>
+          cartState.addItemToCart({
+            price: 10,
+            title: data.title,
+          })
+        }
+        className="p-5 m-5 text-white bg-green-600 rounded-xl hover:bg-green-700">
+        Dodaj do koszyka
+      </button>
     </>
   );
 };
