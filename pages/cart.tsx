@@ -4,14 +4,18 @@ const CartContent = () => {
   const cartState = useCartSate();
 
   return (
-    <div col-span-2>
+    <div className="col-span-2">
       <ul className="divide-y divide-gray-200">
         {cartState.items.map((item, index) => (
           <li className="flex justify-between py-4 " key={index}>
-            <div> {item.title} </div>
+            <div>
+              {item.count} x {item.title}
+            </div>
             <div className="flex">
               {item.price}
-              <button className="ml-4 text-red-700 ">
+              <button
+                className="ml-4 text-red-700 "
+                onClick={() => cartState.removeItemFromCart(item.id)}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
