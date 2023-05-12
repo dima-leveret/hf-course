@@ -5,7 +5,7 @@ import { ZaisteReactMarkdown } from "./ZaisteReactMarkdown";
 import { useCartSate } from "./Cart/CartContext";
 
 interface ProductDetails {
-  id: number;
+  id: number | string;
   title: string;
   description: string;
   thumbnailUrl: string;

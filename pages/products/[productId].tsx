@@ -2,6 +2,14 @@ import { GetStaticPropsContext, InferGetStaticPropsType } from "next";
 // import { useRouter } from "next/router";
 import { ProductDetails } from "../../components/Product";
 import Link from "next/link";
+import { apolloClient } from "../../graphql/apolloClient";
+import {
+  GetProductDetailsByIdDocument,
+  GetProductDetailsByIdQuery,
+  GetProductDetailsByIdQueryVariables,
+  GetProductsSlugDocument,
+  GetProductsSlugQuery,
+} from "../../generated/graphql/graphql";
 
 const ProductIdPage = ({
   data,
@@ -17,13 +25,13 @@ const ProductIdPage = ({
       <Link href="/products">Back home</Link>
       <ProductDetails
         data={{
-          thumbnailUrl: data.image,
-          thumbnailAlt: data.title,
-          title: data.title,
+          thumbnailUrl: data.images[0].url,
+          thumbnailAlt: data.name,
+          title: data.name,
           description: data.description,
-          rating: data.rating.rate,
+          rating: 5,
           id: data.id,
-          longDescription: data.longDescription,
+          longDescription: data.description,
         }}
       />
     </div>
@@ -33,14 +41,19 @@ const ProductIdPage = ({
 export default ProductIdPage;
 
 export const getStaticPaths = async () => {
-  const res = await fetch("https://naszsklep-api.vercel.app/api/products");
-  const data: StoreApiResponse[] = await res.json();
+  // const res = await fetch("https://naszsklep-api.vercel.app/api/products");
+  // const data: StoreApiResponse[] = await res.json();
+
+  const { data } = await apolloClient.query<GetProductsSlugQuery>({
+    query: GetProductsSlugDocument,
+  });
 
   return {
-    paths: data.map((product) => {
+    paths: data.products.map((product) => {
       return {
         params: {
-          productId: product.id.toString(),
+          productId: product.id,
+          productSlug: product.slug,
         },
       };
     }),
@@ -64,28 +77,47 @@ export const getStaticProps = async ({
     };
   }
 
-  const res = await fetch(
-    `https://naszsklep-api.vercel.app/api/products/${params.productId}`
-  );
-  const data: StoreApiResponse | null = await res.json();
+  // const res = await fetch(
+  //   `https://naszsklep-api.vercel.app/api/products/${params.productId}`
+  // );
+  // const data: StoreApiResponse | null = await res.json();
+
+  const { data } = await apolloClient.query<
+    GetProductDetailsByIdQuery,
+    GetProductDetailsByIdQueryVariables
+  >({
+    variables: {
+      id: params?.productId,
+    },
+    query: GetProductDetailsByIdDocument,
+  });
+
+  if (!data || !data.product) {
+    return {
+      props: {},
+      notFound: true,
+    };
+  }
 
   return {
     props: {
-      data,
+      data: {
+        ...data.product,
+      },
     },
   };
 };
 
-export interface StoreApiResponse {
-  id: number;
-  title: string;
-  price: number;
-  description: string;
-  category: string;
-  image: string;
-  longDescription: string;
-  rating: {
-    rate: number;
-    count: number;
-  };
-}
+// export interface StoreApiResponse {
+//   id: number;
+//   title: string;
+//   price: number;
+//   description: string;
+//   category: string;
+//   image: string;
+//   longDescription: string;
+//   rating: {
+//     rate: number;
+//     count: number;
+//   };
+// }
