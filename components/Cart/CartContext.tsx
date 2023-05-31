@@ -67,9 +67,7 @@ export const CartStateContextProvider = ({
         },
         removeItemFromCart: (id) => {
           setCartItems((prevState) => {
-            const existingItem = prevState.find((eItem) => {
-              eItem.id === id;
-            });
+            const existingItem = prevState.find((eItem) => eItem.id === id);
 
             if (existingItem && existingItem.count <= 1) {
               return prevState.filter((eItem) => eItem.id !== id);
