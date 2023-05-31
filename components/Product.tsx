@@ -1,14 +1,17 @@
 import { Rating } from "./Rating";
 import Link from "next/link";
 import Image from "next/legacy/image";
+import { ZaisteReactMarkdown } from "./ZaisteReactMarkdown";
+import { useCartSate } from "./Cart/CartContext";
 
 interface ProductDetails {
-  id: number;
+  id: number | string;
   title: string;
   description: string;
   thumbnailUrl: string;
   thumbnailAlt: string;
   rating: number;
+  longDescription: string;
 }
 
 interface ProductProps {
@@ -31,6 +34,9 @@ export const ProductDetails = ({ data }: ProductProps) => {
 
       <h2 className="p-4 font-bold">{data.title}</h2>
       <p className="p-4">{data.description}</p>
+      <article className="p-4 prose lg:prose-xl">
+        <ZaisteReactMarkdown>{data.longDescription}</ZaisteReactMarkdown>
+      </article>
       <Rating rating={data.rating} />
     </>
   );
@@ -46,6 +52,8 @@ interface ProductListItemProps {
 }
 
 export const ProductListItem = ({ data }: ProductListItemProps) => {
+  const cartState = useCartSate();
+
   return (
     <>
       <div className="p-4 bg-white">
@@ -62,6 +70,18 @@ export const ProductListItem = ({ data }: ProductListItemProps) => {
       <Link href={`/products/${data.id}`}>
         <h2 className="p-4 font-bold">{data.title}</h2>
       </Link>
+      <button
+        onClick={() =>
+          cartState.addItemToCart({
+            id: data.id,
+            price: 10,
+            title: data.title,
+            count: 1,
+          })
+        }
+        className="p-5 m-5 text-white bg-green-600 rounded-xl hover:bg-green-700">
+        Dodaj do koszyka
+      </button>
     </>
   );
 };
